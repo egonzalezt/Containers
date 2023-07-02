@@ -77,24 +77,13 @@ volumes:
 
 ## Explanation
 
-### ZooKeeper Service
-
-The zookeeper service is based on the `confluentinc/cp-zookeeper:latest` Docker image. It serves as the centralized coordination service for Apache Kafka. The service is named "zookeeper" and exposes port 2181 to allow external access. The `ZOOKEEPER_CLIENT_PORT` environment variable is set to 2181 to configure the ZooKeeper client port. The service is connected to the "kafka-network" network.
-
 ### Kafka Service
-
-The kafka service is based on the `wurstmeister/kafka` Docker image. It represents the Kafka broker. The service is named "kafka" and exposes port 9092 to allow external access. Several environment variables are defined to configure Kafka:
-
-- `KAFKA_ZOOKEEPER_CONNECT`: Specifies the connection string for ZooKeeper, using the "zookeeper:2181" address.
-- `KAFKA_ADVERTISED_LISTENERS`: Defines the listeners that Kafka advertises to clients. In this case, it uses "PLAINTEXT://kafka:9092".
-- `KAFKA_LISTENERS`: Specifies the listeners that Kafka listens on. It uses "PLAINTEXT://0.0.0.0:9092" to listen on all network interfaces.
-- `KAFKA_CREATE_TOPICS`: Creates a topic named "test_topic" with one partition and one replica.
 
 The kafka service depends on the zookeeper service and mounts a volume named "kafka-data" to persist Kafka data. It is connected to the "kafka-network" network. Additionally, a healthcheck is defined to verify the health of the Kafka service. It runs the `kafka-topics.sh --list --bootstrap-server kafka:9092` command to check if Kafka is functioning properly.
 
 ### Kafka Manager Service
 
-The service is named "kafka-manager" and exposes port 9000 to allow external access. The `ZK_HOSTS` environment variable is set to "zookeeper:2181" to specify the ZooKeeper connection. The kafka-manager service depends on both the zookeeper and kafka services and is connected to the "kafka-network" network. A healthcheck is defined to check if the Kafka Manager web interface is accessible using the `curl -f http://localhost:9000` command.
+The service is named "kafka-manager" and exposes port 9000 to allow external access. The kafka-manager service depends on both the zookeeper and kafka services and is connected to the "kafka-network" network. A healthcheck is defined to check if the Kafka Manager web interface is accessible using the `curl -f http://localhost:9000` command.
 
 ### Networks and Volumes
 

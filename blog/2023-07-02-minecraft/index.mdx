@@ -1,11 +1,11 @@
 ---
 slug: minecraft
 title: Dockerize Minecraft
-authors: [egonzalezt, ccanasj]
-tags: [compose, docker, minecraft, multistage, network, volume]
+authors: [egonzalezt, ccanasj, armando555, dfgarciac1, eisazav]
+tags: [compose, docker, minecraft, network, volume]
 ---
 
-We love to play Minecraft during vacations. To do this, we rent a cloud provider and use a virtual machine to host our vanilla Minecraft server or one with mods. However, we have always faced a problem: we need to use Linux screen to run our Minecraft server in the background, and if our server crashes, we have to manually restart it. Moreover, if the cloud provider is not accessible from our home, it becomes impossible to start the server again. For this reason, we have decided to dockerize our Minecraft server to address this situation.
+We enjoy playing Minecraft during our vacations. To facilitate this, we rent a cloud provider and utilize a virtual machine to host our vanilla Minecraft server or one with mods. However, we have consistently encountered an issue: the necessity of using Linux screen to run our Minecraft server in the background, and in the event of a server crash, we must manually restart it. Furthermore, if none of us with permissions to access the VM are available, restarting the server becomes impossible. Due to this predicament, we have made the decision to dockerize our Minecraft server in order to tackle this situation.
 
 For that reason, we created [Arequipet](https://arequipet.vasitos.software/) to remotely run Minecraft commands and check the server's status. To make this possible, we utilized Docker for the frontend, backend, and Minecraft server. In this blog, we will discuss the process of dockerizing a Minecraft server.
 

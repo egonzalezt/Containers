@@ -120,3 +120,104 @@ secrets:
     db_password:
         external: true
 ```
+
+### Restart Policies
+
+You can specify the restart policy for your services in the `docker-compose.yml` file. Restart policies define the conditions under which Docker Compose should automatically restart a container if it exits. The following restart policies are available:
+
+#### no 
+
+This is the default restart policy. It means that the container will not be restarted if it exits for any reason.
+
+#### always 
+
+The container will always be restarted regardless of the exit status. This is useful for services that should be running continuously.
+
+#### on-failure
+
+The container will be restarted only if it exits with a non-zero exit code. You can also specify the maximum number of restart attempts using the restart configuration option.
+
+#### unless-stopped
+
+The container will be restarted unless it is explicitly stopped by the user. This is useful for long-running services that should be automatically restarted if the system reboots.
+
+#### Example
+
+```yaml
+services:
+    web:
+        image: nginx:latest
+        restart: always
+```
+
+### Resource Limitations
+
+Resource limitations refer to controlling and restricting the amount of system resources (such as CPU, memory, disk I/O, and network bandwidth) allocated to a process or container. These limitations are set to ensure fair resource distribution, prevent resource monopolization, and maintain system stability.
+
+In the context of Docker containers, resource limitations are crucial for managing containerized applications efficiently and preventing them from impacting the overall system's performance. Docker provides several mechanisms to set resource limits for containers, including:
+
+#### CPU Limit
+
+It restricts the amount of CPU usage available to a container. By setting CPU limits, you can prevent a container from consuming excessive CPU resources and ensure fair distribution among other containers and processes.
+
+#### Memory Limit
+
+It defines the maximum amount of memory that a container can use. Setting memory limits helps prevent a container from exhausting the system's available memory, which could lead to performance degradation or crashes.
+
+#### Disk I/O Limit
+
+Docker allows you to limit the rate of disk I/O operations performed by a container. This helps prevent a container from overwhelming the underlying storage system and affecting other containers or processes that share the same resources.
+
+#### Network Bandwidth Limit
+
+You can restrict the network bandwidth usage of a container. This is particularly useful when you want to allocate a specific amount of network bandwidth to a container or prevent it from saturating the network connection.
+
+#### Example
+
+```yaml
+version: '3'
+services:
+  my-container:
+    image: my-image:latest
+    ports:
+      - "8080:80"
+    volumes:
+      - ./data:/app/data
+    deploy:
+      resources:
+        limits:
+          cpus: '0.5'
+          memory: 512M
+          blkio_weight: 500
+          devices:
+            - '/dev/sda:/dev/xvda:rwm'
+          reservations:
+            devices:
+              - '/dev/sdb:/dev/xvdb:rwm'
+        reservations:
+          cpus: '0.3'
+          memory: 256M
+    networks:
+      - my-network
+
+networks:
+  my-network:
+```
+
+* cpus: '0.5': Restricts the container to use a maximum of 0.5 CPU cores.
+
+* memory: 512M: Sets a memory limit of 512 megabytes for the container.
+
+* blkio_weight: 500: Defines the block I/O weight for the container, giving it a relative weight of 500 compared to other containers.
+
+* devices: Mounts the /dev/sda device inside the container as /dev/xvda with read-write access.
+
+* reservations.devices: Reserves the /dev/sdb device and mounts it as /dev/xvdb with read-write access.
+
+* reservations.cpus: '0.3': Reserves a minimum of 0.3 CPU cores for the container.
+
+* reservations.memory: 256M: Reserves a minimum of 256 megabytes of memory for the container.
+
+:::note
+Note that the resource limits are defined within the `resources` section under the `deploy` key for the service. You can adjust the values according to your specific requirements.
+:::
