@@ -1,0 +1,22 @@
+---
+sidebar_position: 2
+---
+
+# Docker's Workflow
+
+Now lets talk about Docker engine an its components to understand how it works, Docker allows you to develop, assemble, shi and run applications using:
+
+![Ephemeral](./img/engine-components-flow.png)
+
+
+## Docker Daemon
+
+The Docker Daemon is a background process that runs on a host machine and manages Docker containers. It is responsible for building, running, and monitoring containers. The Docker Daemon listens to API requests and performs actions based on those requests. It also takes care of managing Docker images, networking, and storage. In summary, the Docker Daemon is the core component of Docker that handles container operations on the host system.
+
+## Docker Engine RestApi
+
+The Docker Engine REST API is an interface provided by Docker that allows users and applications to interact with the Docker Daemon programmatically. It exposes a set of endpoints that can be accessed using HTTP requests. By using the REST API, you can perform various operations such as creating and managing containers, managing images, and configuring Docker networks and volumes. It provides a way to automate Docker-related tasks and integrate Docker functionality into other tools and applications.
+
+## Docker CLI
+
+Docker CLI (Command Line Interface) is a command-line tool that provides a user-friendly interface for interacting with Docker. It allows users to issue commands to the Docker Daemon using a terminal or command prompt. With the Docker CLI, you can perform various operations such as building and running containers, managing images, networks, and volumes, and monitoring Docker resources. The CLI commands are executed locally, and they communicate with the Docker Daemon over the REST API.

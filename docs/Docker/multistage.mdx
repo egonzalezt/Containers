@@ -1,0 +1,85 @@
+---
+sidebar_position: 5
+---
+
+# Docker Multistage
+
+## What are Docker Multistage Builds?
+
+The concept of multistage builds was introduced in Docker 17.05, and it allows you to use multiple `FROM` statements in a Dockerfile, with each `FROM` statement representing a separate stage. Each stage can have its own base image and set of instructions.
+
+The main benefit of using multistage builds is the reduction in the final image size. In a typical application build process, you might have intermediate build artifacts that are only required during the build phase and not at runtime. With multistage builds, you can discard these intermediate artifacts in later stages, resulting in a leaner final image. This is particularly useful when building applications with compiled languages like C++ or Go, where the build artifacts can be significantly larger than the final runtime binaries.
+
+Additionally, multistage builds can improve build performance. Each stage in the build process is executed sequentially, but Docker caches the intermediate images created in each stage. If the previous stage's instructions and context haven't changed, Docker can reuse the cached image, reducing the time required for subsequent builds.
+
+```dockerfile
+# Stage 1: Build stage
+FROM golang:1.16 AS builder
+WORKDIR /app
+COPY . .
+RUN go build -o myapp
+
+# Stage 2: Runtime stage
+FROM alpine:latest
+WORKDIR /app
+COPY --from=builder /app/myapp .
+CMD ["./myapp"]
+```
+
+In this example, the Dockerfile consists of two stages:
+
+### Build stage
+
+This stage uses the golang:1.16 base image and sets up the working directory. It then copies the application source code, builds the binary using Go, and produces the executable myapp.
+
+### Runtime stage
+
+This stage uses the alpine:latest base image and sets up the working directory. It copies the myapp executable from the previous stage (--from=builder) into the current stage. Finally, it specifies the command to run the application.
+
+During the build process, Docker will execute each stage sequentially. The resulting image will only contain the final stage, in this case, the runtime stage with the Alpine base image and the myapp binary. The build artifacts from the build stage are discarded and not included in the final image.
+
+Thanks to that your final image in this example only uses alpine and dont uses golang image, only uses golang to build your project on `Go` and then execute your project on an alpine project. 
+
+## Real example
+
+The React.js developer server has too many dependencies, packages, or libraries to run the development server. For this reason, it does not make sense to build a Docker image with this option. Additionally, React provides a method called 'react build' that gives us the necessary files to run our React.js application. This Docker multistage uses that command to build our React.js application and then passes these files into an NGINX container, which is more lightweight than the Node 18 image.
+
+```dockerfile
+# pull official base image
+FROM node:18-alpine3.17 AS builder
+
+# set working directory
+WORKDIR /app
+
+COPY package.json ./
+
+# Installs all node packages
+RUN npm install 
+
+
+# Copies everything over to Docker environment
+COPY . ./
+RUN npm run build
+
+#Stage 2
+#######################################
+FROM nginx:1.23.3
+#copies React to the container directory
+# Set working directory to nginx resources directory
+WORKDIR /usr/share/nginx/html
+# Remove default nginx static resources
+RUN rm -rf ./*
+# Copies static resources from builder stage
+COPY --from=builder /app/build .
+
+ENTRYPOINT ["nginx", "-g", "daemon off;"]
+```
+
+This are the results using only nodejs using development server or multistage with nodejs and nginx
+
+- **Option 1**: Using Node —> 1.1GB
+- **Option 2**: Using multi-stage build —> 132.64MB
+
+## Source Code
+
+You can find the source code of ExpressJs Multistage example [here](https://github.com/egonzalezt/Containers/tree/main/docs/Docker/DockerFiles/ExpressJs)

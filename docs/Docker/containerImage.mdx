@@ -1,0 +1,178 @@
+---
+sidebar_position: 4
+---
+
+# Dockerfile 
+
+A Dockerfile is a text file that contains a set of instructions used to build a Docker image. It provides a simple and structured way to define the environment and configuration of a Docker container. Docker uses these instructions to automatically create an image when you run the docker build command.
+
+## Arguments
+
+When building a Docker image, you can use various arguments in the Dockerfile to customize the build process and make your image more flexible. Here are some commonly used Dockerfile arguments:
+
+### ARG
+
+Defines a variable that users can pass at build-time to the builder with the --build-arg flag.
+
+### FROM
+
+Specifies the base image for your Docker image.
+
+### LABEL
+
+Adds metadata to the image, such as maintainer, version, description, etc.
+
+### ENV
+
+Sets environment variables within the image.
+
+### RUN
+
+Executes commands in the image during the build process.
+
+### CMD
+
+Provides default arguments for the ENTRYPOINT or specifies the command to be executed when running the container.
+
+### EXPOSE
+
+Informs Docker that the container listens on the specified network ports at runtime.
+
+### WORKDIR
+
+Sets the working directory for any subsequent instructions.
+
+:::tip
+
+Always use `WORKDIR` to run all your next instructions, save your required files, and make more easier to know where your project are located
+
+:::
+
+### USER
+
+Sets the user (UID) that the image should run as when executing subsequent commands.
+
+### COPY
+
+Copies files or directories from the host machine to the image.
+
+### ADD
+
+Similar to COPY, but with additional features such as extracting tar archives or downloading remote URLs.
+
+### ENTRYPOINT
+
+Specifies the command to be executed when the container is run.
+
+### VOLUME
+
+Creates a mount point and/or marks a directory as externally mounted.
+
+### ONBUILD
+
+Adds a trigger instruction to be executed when the image is used as the base for another build.
+
+### STOPSIGNAL
+
+Sets the system call signal that will be sent to the container to exit.
+
+### HEALTHCHECK
+
+Specifies a command to run to check the container's health status.
+
+### SHELL
+
+Overrides the default shell used for the RUN instruction.
+
+### ARG (multi-stage builds)
+
+Can be used in multi-stage builds to pass arguments between stages.
+
+### AS (multi-stage builds)
+
+Assigns a name to a build stage, which can be referenced by other instructions.
+
+
+## Example 
+
+### Understanding the Base Image
+
+```Dockerfile
+FROM ubuntu:latest
+```
+
+The **FROM** keyword specifies the base image for the Docker image you're creating. In this case, we're using the latest version of the Ubuntu base image.
+
+:::tip
+
+Most of the programming languajes has a base image, this is the best option to avoid installing unnecesary dependencies, for example installing .NET it is no required to have all ubuntu packages and is not needed to manually install .NET dependencies
+
+:::
+
+:::tip
+
+Use `Alpine` Base image because is often considered the best choice for Docker images due to its lightweight, offers significant benefits in terms of image size and resource efficiency, it may not be suitable for all use cases. If your application requires specific libraries or dependencies that are not readily available in the Alpine repositories, you may need to consider alternative base images that better match your requirements.
+
+:::
+
+### Installing Nginx and Dependencies
+
+```Dockerfile
+RUN apt-get update && \
+    apt-get install -y nginx
+```
+
+The **RUN** instruction is used to execute commands during the image build process. Here, we're updating the package list (apt-get update) and installing Nginx (apt-get install -y nginx) in the Ubuntu image.
+
+This step you can install any dependency that you need to run your package for example if you want to run a Minecraft server you need to install java jdk
+
+### Copying a Custom Nginx Configuration
+
+```Dockerfile
+COPY nginx.conf /etc/nginx/nginx.conf
+```
+
+The **COPY** instruction copies files from the Docker build context into the image. Here, we're copying a custom Nginx configuration file (nginx.conf) to the /etc/nginx/nginx.conf path inside the image. This step is optional; you can skip it if you don't have a custom configuration.
+
+### Exposing the Nginx Port
+
+```Dockerfile
+EXPOSE 80
+```
+
+The **EXPOSE** instruction informs Docker that the container will listen on the specified port. Here, we're exposing port 80 to allow incoming connections to Nginx.
+
+### Setting the Entrypoint
+
+```Dockerfile
+ENTRYPOINT ["nginx", "-g", "daemon off;"]
+```
+
+The **ENTRYPOINT** instruction specifies the command that will be executed when the container starts. Here, we're starting Nginx and passing the -g option to provide an additional Nginx configuration (daemon off;). This configuration keeps Nginx running in the foreground, allowing us to see the logs directly.
+
+## Layers
+
+In docker when using the layers at the moment of building our Dockerfile what we do is to create layers that serve us to save commands or functions that we have already executed before and we do not need to execute later for example in our Dockerfile when executing:
+
+```Dockerfile
+COPY index.html /var/www/html
+```
+We do not have to wait for the entire Dockerfile is installed since the layers already took care of this easier install or run the new or changes.
+
+## Running the container
+
+To run our nginx container please follow these steps:
+
+```bash
+docker build -t nginx-docker .
+```
+
+```bash
+docker run -p 80:80 nginx-docker
+```
+
+To undestand better these commands please visit [Docker commands](/Containers/docs/Docker/containerCommands)
+
+## Source Code
+
+You can find the source code of this example [here](https://github.com/egonzalezt/Containers/tree/main/docs/Docker/DockerFiles/Nginx)
