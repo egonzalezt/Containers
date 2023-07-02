@@ -1,0 +1,44 @@
+---
+sidebar_position: 6
+---
+
+# Compose Volumes
+
+Defines named volumes or bind mounts that can be shared across multiple services. Volumes provide persistent storage for data used by containers.
+
+```yaml
+volumes:
+    data:
+        driver: local
+```
+
+## Example
+
+```yaml
+version: '3'
+
+services:
+  web:
+    image: nginx:latest
+    volumes:
+      - data:/var/www/html
+      - ./config/nginx.conf:/etc/nginx/nginx.conf:ro
+      - /host/path:/container/path
+    ports:
+      - 80:80
+
+volumes:
+  data:
+  db_data:
+    driver: local
+```
+
+In this example, we have a service called `web` running Nginx. Let's break down the volume configurations:
+
+Named Volume `data`: The named volume `data` is created without specifying a driver. This will use the default local driver.
+
+Bind Mount `./config/nginx.conf:/etc/nginx/nginx.conf:ro`: This bind mount maps a file from the local host `./config/nginx.conf` to a file inside the container `/etc/nginx/nginx.conf`. The `:ro` option makes the bind mount `read-only`.
+
+Absolute Path Bind Mount `/host/path:/container/path`: This bind mount maps a directory from the local host `/host/path` to a directory inside the container `/container/path`.
+
+Additionally, we define another named volume db_data with a specific driver (local in this case). This named volume can be used by other services if needed.

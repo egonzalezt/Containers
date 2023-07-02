@@ -1,0 +1,122 @@
+---
+sidebar_position: 4
+---
+
+# Docker Compose YML
+
+The `docker-compose.yml` file is written in YAML (Yet Another Markup Language) format and serves as the configuration file for Docker Compose. It defines the services, networks, volumes, and other components required to orchestrate your multi-container application.
+
+## Basic Structure
+
+A typical `docker-compose.yml` file consists of the following key components:
+
+### Version
+Specifies the version of the Docker Compose file format being used. It is recommended to explicitly specify the version to ensure compatibility. For example:
+
+```yaml
+version: '3'
+```
+
+### Services
+
+Defines the individual services or containers that make up your application. Each service has a unique name and includes details such as the image to use, ports to expose, environment variables, volumes, and network connections. For example:
+
+```yaml
+services:
+  web:
+    image: nginx:latest
+    ports:
+      - 80:80
+    environment:
+      - ENVIRONMENT=production
+    volumes:
+      - ./app:/var/www/html
+```
+
+### Networks
+
+Specifies the networks to be created for communication between services. It allows services to communicate with each other using their service names as hostnames. For example:
+
+```yaml
+networks:
+  default:
+    driver: bridge
+```
+
+### Volumes
+
+Defines named volumes or bind mounts that can be shared across multiple services. Volumes provide persistent storage for data used by containers. For example:
+
+```yaml
+volumes:
+    data:
+        driver: local
+```
+
+## Additional Configuration Options
+
+In addition to the basic structure, the docker-compose.yml file supports various other configuration options, including:
+
+### Environment Variables
+
+You can specify environment variables for each service to customize its behavior. This can include database credentials, API keys, or any other configuration specific to your application.
+
+```yaml
+services:
+    api:
+        environment:
+            - DATABASE_URL=mysql://user:password@db_host/db_name
+            - API_KEY=your_api_key
+```
+
+### Dependencies and Links
+
+You can define dependencies between services or link containers together. This allows you to control the startup order of containers and enables services to communicate with each other.
+
+```yaml
+services:
+    api:
+        depends_on:
+            - db
+    db:
+        image: mysql:latest
+```
+
+### Scaling and Replicas
+
+Docker Compose provides the ability to scale services horizontally by specifying the desired number of replicas for a particular service. This allows you to scale your application based on demand.
+
+```yaml
+services:
+    web:
+        image: nginx:latest
+        scale: 3
+```
+
+### Healthchecks
+
+You can define healthchecks to monitor the health of your services. Healthchecks can be used to ensure that containers are running correctly and ready to accept traffic.
+
+```yaml
+services:
+    web:
+        healthcheck:
+            test: ["CMD", "curl", "-f", "http://localhost"]
+            interval: 30s
+            timeout: 10s
+            retries: 3
+```
+
+### Secrets Management
+
+Docker Compose supports integration with Docker Swarm secrets or other secrets management systems to securely manage sensitive information.
+
+```yaml
+services:
+    api:
+        secrets:
+            - db_password
+secrets:
+    db_password:
+        external: true
+```

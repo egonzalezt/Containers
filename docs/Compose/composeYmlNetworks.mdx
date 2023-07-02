@@ -1,0 +1,101 @@
+---
+sidebar_position: 5
+---
+
+# Compose Networks
+
+Specifies the networks to be created for communication between services. It allows services to communicate with each other using their service names as hostnames.
+
+## Bridge Network
+
+A bridge network is the default network type in Docker Compose. It allows containers to communicate with each other on the same host using their service names as hostnames. Here's an example:
+
+```yaml
+networks:
+  default:
+    driver: bridge
+```
+
+## Host Network
+
+A host network allows containers to share the host's networking stack, effectively bypassing network isolation. Here's an example:
+
+```yaml
+networks:
+  default:
+    driver: host
+```
+
+## Overlay Network
+
+An overlay network allows communication between containers running on different hosts. This is useful for creating distributed and scalable applications. Here's an example:
+
+```yaml
+networks:
+  app_network:
+    driver: overlay
+    attachable: true
+```
+
+## Macvlan Network
+
+A Macvlan network allows containers to have their own MAC addresses, making them appear as separate physical devices on the network. Here's an example:
+
+```yaml
+networks:
+  macvlan_network:
+    driver: macvlan
+    driver_opts:
+      parent: eth0
+      mode: bridge
+```
+
+## External Network
+
+An external network allows you to connect your containers to an existing network created outside of Docker Compose. This is useful for integrating with other Docker Compose projects or existing infrastructure. Here's an example:
+
+```yaml
+networks:
+  external_network:
+    external:
+      name: my_existing_network
+```
+
+:::tip
+In this example, `my_existing_network` is the name of an external network created by another Docker Compose project or manually using Docker commands.
+
+Note that the availability of network types may vary depending on your Docker installation and configuration.
+
+Remember to replace the network names (`default`, `app_network`, `macvlan_network`, `external_network`) with meaningful names based on your specific use case.
+:::
+
+## Manually set Ip addresses
+
+```yaml
+version: '3'
+
+services:
+  app1:
+    image: nginx:latest
+    networks:
+      my_network:
+        ipv4_address: 192.168.0.10
+
+  app2:
+    image: mysql:latest
+    networks:
+      my_network:
+        ipv4_address: 192.168.0.20
+
+networks:
+  my_network:
+    driver: bridge
+    ipam:
+      driver: default
+      config:
+        - subnet: 192.168.0.0/24
+```
+
+:::note
+Remember to adjust the IP addresses, subnet, and service names as needed to match your specific requirements.
+:::

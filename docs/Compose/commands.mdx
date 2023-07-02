@@ -1,0 +1,95 @@
+---
+sidebar_position: 3
+---
+
+# Commands
+
+Docker Compose is a powerful tool for managing multi-container applications. It provides several commands to manage the lifecycle of your containers and services.
+
+
+### `docker compose up`
+
+This command starts your containers and services defined in the Compose file.
+
+**Flags:**
+
+- `-d` or `--detach`: Run containers in the background and print container IDs.
+- `--build`: Build images before starting containers.
+- `--no-build`: Do not build images before starting containers.
+- `--force-recreate`: Recreate containers even if their configuration has not changed.
+
+### `docker compose down`
+
+This command stops and removes the containers, networks, and volumes defined in your Compose file.
+
+**Flags:**
+
+- `--volumes`: Remove named volumes declared in the `volumes` section of the Compose file.
+- `--rmi <all|local>`: Remove images. "all" removes all images used by any service. "local" removes only the images that are not pulled from a remote registry.
+
+### `docker compose start`
+
+This command starts existing containers defined in the Compose file.
+
+**Flags:**
+
+No additional flags available.
+
+### `docker compose stop`
+
+This command stops running containers without removing them.
+
+**Flags:**
+
+No additional flags available.
+
+### `docker compose restart`
+
+This command restarts containers.
+
+**Flags:**
+
+No additional flags available.
+
+### `docker compose pause`
+
+This command pauses running containers.
+
+**Flags:**
+
+No additional flags available.
+
+### `docker compose unpause`
+
+This command unpauses paused containers.
+
+**Flags:**
+
+No additional flags available.
+
+### `docker compose build`
+
+This command builds or rebuilds services defined in the Compose file.
+
+**Flags:**
+
+- `--no-cache`: Do not use cache when building the image.
+
+
+### `docker compose logs`
+
+This command displays the logs of the containers defined in the Compose file.
+
+**Flags:**
+
+- `--follow, -f`: Follow log output.
+- `--tail <number>`: Show the last number of lines from the logs (default: "all").
+- `--timestamps`: Show timestamps.
+
+### `docker compose exec`
+
+This command runs a command in a running container.
+
+**Flags:**
+
+No additional flags available.
