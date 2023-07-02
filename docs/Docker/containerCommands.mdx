@@ -53,6 +53,32 @@ Example on our nginx container:
 docker build -t nginx-docker .
 ```
 
+### Docker context
+
+In the context of the `docker build` command, the `.` (period) refers to the build context. The build context is the path to the directory containing the files and directories that you want to include in the Docker image. It serves as the root directory for the build process.
+
+When you run the `docker build` command, Docker needs access to the files specified in the Dockerfile (e.g., `COPY` or `ADD` instructions). The build context is used to determine which files are included in the image.
+
+By default, Docker assumes that the Dockerfile is located in the current directory. Therefore, when you specify `.` after the `docker build` command, you are telling Docker to use the current directory as the build context. Docker will then look for the Dockerfile in that directory and include all files and directories from the current directory and its subdirectories in the image.
+
+For example, if you have a Dockerfile located in the `/project` directory, and you are currently in the `/project` directory, you can run the following command:
+
+```bash
+docker build -t image-name:tag .
+```
+
+Here, `.` represents the current directory `/project`, and Docker will use the files and directories in the `/project` directory as the build context for the image.
+
+You can also specify a different directory as the build context by providing the path to that directory instead of `.`. For example:
+
+```bash
+docker build -t image-name:tag /path/to/build-context
+```
+
+:::info
+In this case, Docker will use the files and directories in the `/path/to/build-context` directory as the build context for the image.
+:::
+
 ## Running a Docker Container
 
 To run a Docker container using the built image, use the following command:

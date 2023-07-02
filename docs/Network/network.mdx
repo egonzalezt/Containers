@@ -3,3 +3,37 @@ sidebar_position: 2
 ---
 
 # Docker Network
+
+In Docker, networking plays a crucial role in facilitating communication between containers, as well as connecting containers to external networks and services. Docker networking provides a range of capabilities to achieve these objectives:
+
+## Default Bridge Network
+
+When you install Docker, a default bridge network called `bridge` is created automatically. Containers that are connected to this network can communicate with each other using their IP addresses. By default, Docker assigns an IP address from the `bridge` network to each container, allowing them to interact using these addresses. However, the IP addresses are not static, and containers may need to discover each other dynamically.
+
+## User-defined Networks
+
+Docker allows you to create custom networks using the `docker network create` command. User-defined networks provide better control and isolation for your containers. Containers connected to the same user-defined network can communicate with each other using their container names as DNS entries, making the communication more reliable and easier to manage.
+
+## Network Drivers
+
+Docker supports multiple network drivers that offer different functionalities and capabilities. The default bridge network driver is called `bridge`. Additionally, there are other drivers like `host` (containers use the host's network stack), `overlay` (enables multi-host communication in swarm mode), and `macvlan` (assigns a MAC address to each container, making them appear as physical devices on the network). Network plugins, such as Calico or Weave, can also be used to extend Docker's networking capabilities.
+
+## Network Scopes 
+
+Docker supports different network scopes, including `bridge`, `host`, and `none`. The `bridge` scope allows containers to communicate with each other within the same network. The `host` scope allows containers to directly use the host's network stack, effectively sharing the host's network interface. The `none` scope removes network access entirely from the container.
+
+## Port Mapping 
+
+Docker enables you to map ports between the container and the host system, allowing external access to services running inside containers. You can specify port mappings using the `-p` flag when running a container, mapping the container's port to a port on the host system.
+
+## Service Discovery
+
+Docker provides built-in DNS-based service discovery. Containers connected to the same network can resolve each other's container names as DNS entries, simplifying communication between services running in different containers.
+
+## External Connectivity
+
+Docker containers can connect to external networks, such as the host network or other networks available in the environment. This enables containers to access resources outside the containerized environment, such as databases, APIs, or the internet.
+
+## Overlay Networks
+
+Docker Swarm mode supports overlay networks, which allow containers to communicate seamlessly across multiple hosts in a cluster. Overlay networks enable scalable and distributed deployments, where containers can be scheduled and managed across a swarm of Docker hosts.

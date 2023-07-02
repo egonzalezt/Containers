@@ -4,4 +4,30 @@ sidebar_position: 1
 
 # Intro
 
-In progress
+Docker allows you to package your applications and their dependencies into isolated containers. When running multiple containers as part of a larger system, it becomes essential to establish communication and connectivity between these containers. This is where Docker networking comes into play.
+
+Docker provides a built-in networking feature that enables containers to communicate with each other and with external networks. Docker networking allows you to create virtual networks and connect containers to these networks, providing a secure and isolated environment for your applications.
+
+With Docker networking, you can achieve various objectives:
+
+## Container-to-container communication
+
+Docker enables containers to communicate with each other using network aliases or container names. This allows applications running in separate containers to interact seamlessly, forming a distributed system.
+
+## Network isolation
+
+Docker allows you to create custom networks to isolate containers from each other. By placing containers in separate networks, you can control their level of access and prevent unauthorized communication.
+
+## Access to external networks
+
+Docker containers can connect to external networks, such as the host network or other networks available in the environment. This enables containers to access resources outside the containerized environment, such as databases or web services.
+
+## Load balancing and service discovery
+
+Docker networking includes features like DNS-based service discovery and load balancing. These capabilities allow containers to discover and communicate with services running on other containers dynamically.
+
+## Network plugins
+
+Docker supports various network plugins that extend its networking capabilities. These plugins provide additional functionalities like overlay networks, software-defined networking (SDN), and integration with external network management systems.
+
+By leveraging Docker networking, you can design and deploy complex distributed systems composed of interconnected containers. It allows you to build scalable, resilient, and flexible architectures, where containers communicate efficiently while maintaining network security and isolation.

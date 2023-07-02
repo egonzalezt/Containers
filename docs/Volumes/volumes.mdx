@@ -4,4 +4,112 @@ sidebar_position: 2
 
 # Docker Volumes
 
-In progress
+Docker volumes are a way to persist data generated or used by Docker containers. They provide a method to store and share data between containers or between a container and the host machine.
+
+When a Docker container is created, it runs in an isolated environment with its own filesystem. By default, any changes made inside the container, such as writing files or creating databases, are stored within the container's writable layer. However, once the container is stopped or removed, all the data inside the container's writable layer is lost.
+
+This is where Docker volumes come in. A volume is a directory or filesystem that exists outside the container's filesystem, allowing data to persist even after the container is stopped or removed. Volumes can be shared among multiple containers, enabling easy data sharing and collaboration.
+
+## Type Of Volumes
+
+![Types](./img/types-of-mounts-volume.png)
+
+### Named Volumes
+
+These volumes have a specific name assigned to them and are managed by Docker. You can create a named volume using the docker volume create command or by defining it in a docker-compose.yml file. Named volumes are recommended for most use cases as they are easy to manage and can be shared among multiple containers.
+
+### Host Volumes
+
+With host volumes, you can mount a directory from the host machine into the container. This allows you to directly access and manipulate files on the host filesystem. Host volumes are specified using an absolute path on the host machine in the Docker run or Docker Compose command.
+
+### Bind Mounts
+
+Similar to host volumes, bind mounts also allow you to mount a directory from the host machine into the container. However, unlike host volumes, bind mounts can use relative paths and can be more flexible in terms of configuration. Bind mounts are specified using a source and target path separated by a colon (:) in the Docker run or Docker Compose command.
+
+### Tmpfs Mounts
+
+Tmpfs mounts are stored in the host machine's memory rather than on the filesystem. This means that the data stored in a tmpfs volume is temporary and will not persist after the container is stopped or restarted. Tmpfs mounts are useful for storing sensitive or temporary data that you don't want to persist.
+
+### Anonymous volumes
+
+Is another type of volume supported by Docker. They are created and managed by Docker itself, but unlike named volumes, they do not have an explicit name assigned to them.
+
+Anonymous volumes are typically used for temporary or disposable data, such as caches or logs, that doesn't need to persist beyond the lifecycle of the container. They are managed by Docker and can be removed along with the container when it is stopped or removed, unless they are explicitly referenced or used by other containers or services.
+
+## Example
+
+On the example you will see different approach to run a nginx server using volumes
+
+### Named Volume
+
+```bash
+docker run -d -p 80:80 -v my_nginx_volume:/usr/share/nginx/html --name my_nginx nginx
+```
+
+:::note
+`-v my_nginx_volume:/usr/share/nginx/html` creates a named volume named `my_nginx_volume` and mounts it to the `/usr/share/nginx/html` directory inside the container. This allows you to persist data even if the container is removed or recreated.
+:::
+
+### Host Volume
+
+```bash
+docker run -d -p 80:80 -v /path/on/host:/usr/share/nginx/html --name my_nginx nginx
+```
+
+:::note
+`-v /path/on/host:/usr/share/nginx/html` mounts a directory on the host machine (specified by `/path/on/host`) to the `/usr/share/nginx/html` directory inside the container. Changes made to the files in this directory are reflected both inside the container and on the host machine.
+:::
+
+### Bind Mount Volume
+
+```bash
+docker run -d -p 80:80 --mount type=bind,source=$(pwd)/data,target=/usr/share/nginx/html --name my_nginx nginx
+```
+
+Changes made to the files in the `data` directory are reflected both inside the container and in the relative path on the host machine.
+
+:::note
+`$(pwd)` retrieves the current working directory and appends it to the `/data` directory, forming a relative path.
+:::
+
+:::note
+`--mount type=bind,source=/path/on/host,target=/usr/share/nginx/html` creates a bind mount volume that maps a directory on the host machine (specified by `/path/on/host`) to the `/usr/share/nginx/html` directory inside the container. Similar to the host volume, changes made to the files in this directory are reflected both inside the container and on the host machine.
+:::
+
+### Tmpfs Volume
+
+```bash
+docker run -d -p 80:80 --mount type=tmpfs,destination=/usr/share/nginx/html --name my_nginx nginx
+```
+
+:::note
+`--mount type=tmpfs,destination=/usr/share/nginx/html` creates a temporary file system (tmpfs) volume inside the container at the specified destination (`/usr/share/nginx/html`). This volume is stored in memory and is not persisted, meaning any changes made to it will be lost when the container is stopped or restarted.
+:::
+
+### Anonymous Volume
+
+```bash
+docker run -d -p 80:80 -v /usr/share/nginx/html --name my_nginx nginx
+```
+:::note
+`-v /usr/share/nginx/html` creates an anonymous volume that is automatically managed by Docker. The volume is created at a random location on the host machine, and any changes made to it are persisted even if the container is removed or recreated. However, since it is anonymous, you cannot explicitly reference or manage it by name.
+:::
+
+## Differences between `-v` and `--mount`
+
+The main differences between the -v and --mount options in Docker are related to the flexibility and features they provide:
+
+### Mount Types
+
+`-v` only supports the creation of named volumes or mounting directories from the host machine.
+`--mount` supports various volume types, including bind mounts, tmpfs volumes, and named volumes.
+
+### Fine-grained Control
+
+`-v` provides limited control over volume options. By default, it creates named volumes and automatically manages them.
+`--mount` offers more control and flexibility. You can specify the volume type, mount options, access modes, propagation, and more.
+
+### Compatibility:
+
+`-v` is the older syntax and is compatible with both the older Docker versions and the newer ones.
+`--mount` is the newer syntax introduced in Docker 17.06 and is recommended for newer versions.

@@ -1,0 +1,176 @@
+---
+sidebar_position: 3
+---
+
+# Commands
+
+## Create a Volume
+
+To create a volume, you can use the `docker volume create` command. It allows you to specify the name of the volume.
+
+```bash
+docker volume create <volume_name>
+```
+
+## List Volumes
+
+To list all available volumes on your Docker host, you can use the docker volume ls command. This command provides information such as the volume name and the driver used.
+
+```bash
+docker volume ls
+```
+
+## Inspect a Volume
+
+To inspect the details of a specific volume, you can use the `docker volume inspect` command. This command provides detailed information about the volume, including its name, driver, and mountpoint.
+
+```bash
+docker volume inspect <volume_name>
+```
+
+## Remove a Volume
+
+To remove a volume, you can use the `docker volume rm` command. This command deletes the specified volume, along with any data stored in it.
+
+
+```bash
+docker volume rm <volume_name>
+```
+
+## Example
+
+### Create a Docker volume
+
+```bash
+docker volume create my_nginx_volume
+```
+
+### Run the Nginx container with the volume mounted
+
+```bash
+docker run -d \
+  --name my_nginx_container \
+  -p 80:80 \
+  -v my_nginx_volume:/usr/share/nginx/html \
+  nginx
+```
+
+### Verify that the container is running
+
+```bash
+docker ps
+```
+
+### List the available volumes
+
+```bash
+docker volume ls
+```
+
+### Inspect the details of the created volume
+
+```bash
+docker volume inspect my_nginx_volume
+```
+
+### Remove the Nginx container
+
+```bash
+docker stop my_nginx_container
+docker rm my_nginx_container
+```
+
+### Remove the volume
+
+```bash
+docker volume rm my_nginx_volume
+```
+
+## Example 2 using --mount
+
+### Create a directory on the host to be mounted as a volume
+
+```bash
+mkdir /path/to/host/dir
+```
+
+### Create a file inside the host directory
+
+```bash
+echo "Hello from Docker!" > /path/to/host/dir/index.html
+```
+
+### Run the Nginx container with the host directory mounted
+
+```bash
+docker run -d \
+  --name my_nginx_container \
+  -p 80:80 \
+  --mount type=bind,source=/path/to/host/dir,target=/usr/share/nginx/html \
+  nginx
+```
+
+### Verify that the container is running
+
+```bash
+docker ps
+```
+
+### Access the Nginx container through a web browser or use curl
+
+```bash
+curl http://localhost
+```
+
+### Stop and remove the Nginx container
+
+```bash
+docker stop my_nginx_container
+docker rm my_nginx_container
+```
+
+### Remove the host directory
+
+```bash
+rm -r /path/to/host/dir
+```
+
+## Example using Dockerfile
+
+```dockerfile
+# Use the official Nginx base image
+FROM nginx
+
+# Create a volume for /usr/share/nginx/html
+VOLUME /usr/share/nginx/html
+
+# Expose port 80 for Nginx
+EXPOSE 80
+
+# Start Nginx when the container launches
+CMD ["nginx", "-g", "daemon off;"]
+```
+
+we use the `VOLUME` instruction to create a named volume for the `/usr/share/nginx/html` directory. This volume will allow data to persist even if the container is removed.
+
+### Build
+
+To build the Docker image, use the `docker build` command
+
+```bash
+docker build -t my_nginx_image .
+```
+### Run
+
+Then, run the container with the volume mounted and copy the files into it:
+
+```bash
+docker run -d -p 80:80 --name my_nginx_container -v my_nginx_volume:/usr/share/nginx/html my_nginx_image
+docker cp index.html my_nginx_container:/usr/share/nginx/html/
+```
+
+We run the container with the `-v` flag to mount the volume `my_nginx_volume` to the `/usr/share/nginx/html` path in the container. 
+
+:::info
+After the container starts, we use `docker cp` to copy the `index.html` file into the running container's volume.
+:::
