@@ -42,3 +42,92 @@ Bind Mount `./config/nginx.conf:/etc/nginx/nginx.conf:ro`: This bind mount maps 
 Absolute Path Bind Mount `/host/path:/container/path`: This bind mount maps a directory from the local host `/host/path` to a directory inside the container `/container/path`.
 
 Additionally, we define another named volume db_data with a specific driver (local in this case). This named volume can be used by other services if needed.
+
+## Named Volumes:
+
+Named volumes are a way to create and manage volumes with a user-friendly name. They are defined under the volumes section in the `docker-compose.yml` file.
+
+### Examples
+
+```yaml
+version: '3'
+
+services:
+  db:
+    image: mariadb:latest
+    volumes:
+      - db_data:/var/lib/mysql
+    environment:
+      MYSQL_ROOT_PASSWORD: example_password
+      MYSQL_DATABASE: mydatabase
+      MYSQL_USER: myuser
+      MYSQL_PASSWORD: mypassword
+
+volumes:
+  db_data:
+    driver: local
+```
+
+The volumes section under the db service specifies a named volume named `db_data`. This volume is mounted to the `/var/lib/mysql` directory inside the MariaDB container, where MariaDB stores its database files.
+
+## Bind Mounts
+
+Bind mounts link a directory or file on the host machine to a directory in the container. They are useful for quickly sharing code or configuration files between the host and the container.
+
+```yaml
+version: '3'
+
+services:
+  db:
+    image: mariadb:latest
+    volumes:
+      - ./init.sql:/docker-entrypoint-initdb.d/init.sql
+      - db_data:/var/lib/mysql
+    environment:
+      MYSQL_ROOT_PASSWORD: example_password
+      MYSQL_DATABASE: mydatabase
+      MYSQL_USER: myuser
+      MYSQL_PASSWORD: mypassword
+
+volumes:
+  db_data:
+    driver: local
+```
+
+* An additional bind mount is added under the volumes section for the db service. It maps the local file `./init.sql` to `/docker-entrypoint-initdb.d/init.sql` inside the MariaDB container. This is a common location where MariaDB looks for initialization scripts during the container startup.
+* The `./init.sql` file can contain SQL statements that will be executed when the MariaDB container is first started, allowing you to initialize the database with custom schema or data.
+
+In both examples bind and named, the db_data volume ensures that the MariaDB data persists even if the container is stopped or removed, providing a way to maintain the database state across container restarts. The bind mount, on the other hand, allows you to inject external configuration or initialization files into the container.
+
+## Anonymous Volumes
+
+Anonymous volumes are similar to named volumes, but they don't have an explicit name. Docker automatically generates a unique name for them. They are primarily used when you don't need to share the volume between services.
+
+```yaml
+services:
+  db:
+    image: mariadb:latest
+    volumes:
+      - /var/lib/mysql
+```
+## External Volumes
+
+External volumes refer to volumes that are created outside the Docker Compose file. They can be pre-created using `docker volume create` and then referenced in the docker-compose.yml file.
+
+```yaml
+volumes:
+  data:
+    external: true
+```
+
+## Tmpfs Mounts
+
+Tmpfs mounts create a temporary filesystem in the host machine's memory and mount it into the container. This type of volume is useful when you want to store data temporarily and don't need persistence.
+
+```yaml
+services:
+  app:
+    image: myapp:latest
+    tmpfs:
+      - /tmp
+```
