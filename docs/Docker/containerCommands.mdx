@@ -76,7 +76,7 @@ docker build -t image-name:tag /path/to/build-context
 ```
 
 :::info
-In this case, Docker will use the files and directories in the `/path/to/build-context` directory as the build context for the image.
+In this case, Docker will use the files and directories in the `/path/to/build-context` directory as the build context for the image. If your dockerfile is located on other location different of `/path/to/build-context` that you set use the `-f` command to specify where is located your dockerfile `docker build -t image-name:tag -f /path/to/Dockerfile /path/to/build-context`
 :::
 
 ## Running a Docker Container
